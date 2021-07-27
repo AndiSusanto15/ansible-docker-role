@@ -1,0 +1,37 @@
+---
+# tasks file for roles/batutah.docker
+- name: Install dependencies
+  apt:
+    name: 
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    state: latest
+
+- name: Check /usr/share/keyrings/docker-archive-keyring.gpg
+  stat:
+    path: /usr/share/keyrings/docker-archive-keyring.gpg
+  register: docker_gpg_stat
+
+- name: Added docker GPG key
+  shell: -y | curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+  when: docker_gpg_stat.stat.exists == False
+
+- name: Added docker repository
+  shell: echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+- name: Install docker
+  apt:
+    name: 
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+
+- name: Added user to docker group
+  user:
+    name: "{{ docker_user }}"
+    groups: 
+      - docker
+    append: yes
