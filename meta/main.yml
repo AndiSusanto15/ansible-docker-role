@@ -1,6 +1,7 @@
 galaxy_info:
-  author: your name
-  description: your role description
+  role_name: docker
+  author: Andi Susanto
+  description: Ansible playbook to install docker on Ubuntu
   company: your company (optional)
 
   # If the issue tracker for your role is not on github, uncomment the
